@@ -17,7 +17,7 @@
 #define IFACE_HS_ULPI     2
 
 #define conf_port PORT_HS
-#define conf_iface IFACE_FS
+#define conf_iface IFACE_HS_EMBEDDED
 #define conf_nr_ep 4
 
 /* USB On-The-Go Full Speed interface */

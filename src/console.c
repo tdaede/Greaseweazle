@@ -13,24 +13,32 @@
 #define BAUD 3000000 /* 3Mbaud */
 #endif
 
+#define STM32F7_DISCO 1
+
 #if STM32F == 1
 #define PCLK SYSCLK
+#define usart usart1
+#define USART_IRQ 37
+#elif STM32F7_DISCO == 1
+#define PCLK (APB1_MHZ * 1000000)
+#define usart usart2
+#define USART_IRQ 38
 #elif STM32F == 7
 #define PCLK (APB2_MHZ * 1000000)
+#define usart usart1
+#define USART_IRQ 37
 #endif
-
-#define USART1_IRQ 37
 
 static void ser_putc(uint8_t c)
 {
 #if STM32F == 1
-    while (!(usart1->sr & USART_SR_TXE))
+    while (!(usart->sr & USART_SR_TXE))
         cpu_relax();
-    usart1->dr = c;
+    usart->dr = c;
 #elif STM32F == 7
-    while (!(usart1->isr & USART_ISR_TXE))
+    while (!(usart->isr & USART_ISR_TXE))
         cpu_relax();
-    usart1->tdr = c;
+    usart->tdr = c;
 #endif
 }
 
@@ -86,6 +94,13 @@ void console_init(void)
 #if STM32F == 1
     gpio_configure_pin(gpioa, 9, AFO_pushpull(_10MHz));
     gpio_configure_pin(gpioa, 10, GPI_pull_up);
+#elif STM32F7_DISCO == 1
+    rcc->apb1enr |= RCC_APB1ENR_USART2EN;
+    peripheral_clock_delay();
+    gpio_set_af(gpioa, 2, 7);
+    gpio_set_af(gpioa, 3, 7);
+    gpio_configure_pin(gpioa, 2, AFO_pushpull(IOSPD_MED));
+    gpio_configure_pin(gpioa, 3, AFI(PUPD_up));
 #elif STM32F == 7
     gpio_set_af(gpioa, 9, 7);
     gpio_set_af(gpioa, 10, 7);
@@ -94,8 +109,8 @@ void console_init(void)
 #endif
 
     /* BAUD, 8n1. */
-    usart1->brr = PCLK / BAUD;
-    usart1->cr1 = (USART_CR1_UE | USART_CR1_TE | USART_CR1_RE);
+    usart->brr = PCLK / BAUD;
+    usart->cr1 = (USART_CR1_UE | USART_CR1_TE | USART_CR1_RE);
 }
 
 /* Debug helper: if we get stuck somewhere, calling this beforehand will cause 
@@ -103,14 +118,14 @@ void console_init(void)
 void console_crash_on_input(void)
 {
 #if STM32F == 1
-    (void)usart1->dr; /* clear UART_SR_RXNE */
+    (void)usart->dr; /* clear UART_SR_RXNE */
 #elif STM32F == 7
-    usart1->rqr = USART_RQR_RXFRQ; /* clear ISR_RXNE */
-    usart1->icr = USART_ICR_ORECF; /* clear ISR_ORE */
+    usart->rqr = USART_RQR_RXFRQ; /* clear ISR_RXNE */
+    usart->icr = USART_ICR_ORECF; /* clear ISR_ORE */
 #endif
-    usart1->cr1 |= USART_CR1_RXNEIE;
-    IRQx_set_prio(USART1_IRQ, RESET_IRQ_PRI);
-    IRQx_enable(USART1_IRQ);
+    usart->cr1 |= USART_CR1_RXNEIE;
+    IRQx_set_prio(USART_IRQ, RESET_IRQ_PRI);
+    IRQx_enable(USART_IRQ);
 }
 
 /*

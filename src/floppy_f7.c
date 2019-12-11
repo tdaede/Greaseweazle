@@ -18,40 +18,40 @@
 
 /* Input pins */
 #define gpio_index  gpiob
-#define pin_index   2 /* PB2 */
-#define gpio_trk0   gpioa
-#define pin_trk0    3 /* PA3 */
-#define gpio_wrprot gpioa
-#define pin_wrprot  1 /* PA1 */
+#define pin_index   0 /* PB2 */
+#define gpio_trk0   gpiob
+#define pin_trk0    0 /* PA3 */
+#define gpio_wrprot gpiob
+#define pin_wrprot  0 /* PA1 */
 
 /* Output pins. */
 #define gpio_densel gpiob
-#define pin_densel 12 /* PB12 */
+#define pin_densel 0 /* PB12 */
 #define gpio_pin10 gpiob
-#define pin_pin10  1  /* PB1 */
+#define pin_pin10  0  /* PB1 */
 #define gpio_pin12 gpiob
 #define pin_pin12  0  /* PB0 */
 #define gpio_pin14 gpiob
-#define pin_pin14  11 /* PB11 */
+#define pin_pin14  0 /* PB11 */
 #define gpio_pin16 gpiob
-#define pin_pin16  10 /* PB10 */
-#define gpio_dir   gpioc
-#define pin_dir    4  /* PC4 */
-#define gpio_step  gpioa
-#define pin_step   7  /* PA7 */
-#define gpio_wgate gpioa
-#define pin_wgate  6  /* PA6 */
-#define gpio_side  gpioc
-#define pin_side   3  /* PC3 */
+#define pin_pin16  0 /* PB10 */
+#define gpio_dir   gpiob
+#define pin_dir    0  /* PC4 */
+#define gpio_step  gpiob
+#define pin_step   0  /* PA7 */
+#define gpio_wgate gpiob
+#define pin_wgate  0  /* PA6 */
+#define gpio_side  gpiob
+#define pin_side   0  /* PC3 */
 
 /* RDATA: Pin A0, Timer 2 Channel 1, DMA1 Stream 5 Channel 3. */
-#define gpio_rdata  gpioa
+#define gpio_rdata  gpiob
 #define pin_rdata   0
 #define tim_rdata   (tim2)
 #define dma_rdata   (dma1->str[5])
 
 /* WDATA: Pin A2, Timer 2 Channel 3, DMA1 Stream 1 Channel 3. */
-#define gpio_wdata  gpioa
+#define gpio_wdata  gpiob
 #define pin_wdata   2
 #define tim_wdata   (tim2)
 #define dma_wdata   (dma1->str[1])
