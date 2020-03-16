@@ -28,12 +28,17 @@ def dump_track(dat, trk_offs, trknr, show_dat):
         fluxl.append(flux / 40)
     tot = 0.0
     i = 0
+    mac_speeds = [ 394, 429, 472, 525, 590, 590 ]
+    mac_rpm = mac_speeds[trknr >> (4+1)]
+    print("RPM %u Factor %f" % (mac_rpm, 300 / mac_rpm))
     for x in fluxl:
+#        x *= 300 / mac_rpm
         bad = ""
         if (x < 3.6) or ((x > 4.4) and (x < 5.4)) \
            or ((x > 6.6) and (x < 7.2)) or (x > 8.8):
             bad = "BAD"
-        print("%d: %f %s" % (i, x, bad))
+#        print("%d: %f %s" % (i, x, bad))
+        print("%d %f" % (i, x))
         i += 1
         tot += x
     print("Total: %uus (%uus per rev)" % (int(tot), tot//nr_revs))
