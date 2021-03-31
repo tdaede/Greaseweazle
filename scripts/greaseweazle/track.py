@@ -106,7 +106,7 @@ class MasterTrack:
                 # Short weak regions are written with no flux transitions.
                 # Actually we insert a flux transition every 32 bitcells, else
                 # we risk triggering Greaseweazle's No Flux Area generator.
-                pattern.frombytes(b"\x80\x00\x00\x00")
+                pattern.frombytes(b"\x00\x00\x00\x00")
                 bits[s:e] = (pattern * (n//32+1))[:n]
             else:
                 # Long weak regions we present a fuzzy clock bit in an
