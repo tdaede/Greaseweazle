@@ -28,13 +28,15 @@ void fpec_init(void)
     fpec_wait_and_clear();
 }
 
-void fpec_page_erase(uint32_t flash_address)
+int fpec_page_erase(uint32_t flash_address)
 {
     int sector = (flash_address - 0x08000000) >> 14;
     fpec_wait_and_clear();
+    flash->sr = FLASH_SR_WRPERR;
     flash->cr = FLASH_CR_PSIZE(2) | FLASH_CR_SER | FLASH_CR_SNB(sector);
     flash->cr |= FLASH_CR_STRT;
     fpec_wait_and_clear();
+    return (flash->sr & FLASH_SR_WRPERR) ? FPEC_ERR_WRPROT : 0;
 }
 
 void fpec_write(const void *data, unsigned int size, uint32_t flash_address)

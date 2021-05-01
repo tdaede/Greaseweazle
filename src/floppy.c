@@ -1093,11 +1093,16 @@ static struct {
     uint32_t len;
 } update;
 
-static void erase_old_bootloader(void)
+static int erase_old_bootloader(void)
 {
     uint32_t p;
-    for (p = BL_START; p < BL_END; p += FLASH_PAGE_SIZE)
-        fpec_page_erase(p);
+    int rc;
+    for (p = BL_START; p < BL_END; p += FLASH_PAGE_SIZE) {
+        rc = fpec_page_erase(p);
+        if (rc)
+            break;
+    }
+    return rc;
 }
 
 static void update_prep(uint32_t len)
@@ -1133,7 +1138,10 @@ static void update_continue(void)
      * Try really hard to write the new bootloader (including retries). */
     fpec_init();
     for (retry = 0; retry < 3; retry++) {
-        erase_old_bootloader();
+        if (erase_old_bootloader() != 0) {
+            crc = 1;
+            continue;
+        }
         fpec_write(u_buf, update.len, BL_START);
         crc = crc16_ccitt((void *)BL_START, update.len, 0xffff);
         if (crc == 0)

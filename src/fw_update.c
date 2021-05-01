@@ -156,7 +156,7 @@ static void process_command(void)
         uint32_t u_len = *(uint32_t *)&u_buf[2];
         if (len != 6) goto bad_command;
         if (u_len & 3) goto bad_command;
-        update_prep(u_len);
+        u_buf[1] = update_prep(u_len);
         break;
     }
 #if MCU != STM32F1

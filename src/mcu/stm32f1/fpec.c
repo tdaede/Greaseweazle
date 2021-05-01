@@ -13,7 +13,6 @@ static void fpec_wait_and_clear(void)
 {
     while (flash->sr & FLASH_SR_BSY)
         continue;
-    flash->sr = FLASH_SR_EOP | FLASH_SR_WRPRTERR | FLASH_SR_PGERR;
     flash->cr = 0;
 }
 
@@ -33,13 +32,21 @@ void fpec_init(void)
     fpec_wait_and_clear();
 }
 
-void fpec_page_erase(uint32_t flash_address)
+int fpec_page_erase(uint32_t flash_address)
 {
+    uint32_t sr;
+
     fpec_wait_and_clear();
+    flash->sr = FLASH_SR_WRPRTERR | FLASH_SR_PGERR;
     flash->cr |= FLASH_CR_PER;
     flash->ar = flash_address;
     flash->cr |= FLASH_CR_STRT;
     fpec_wait_and_clear();
+
+    sr = flash->sr;
+    return ((sr & FLASH_SR_WRPRTERR) ? FPEC_ERR_WRPROT
+            : (sr & FLASH_SR_PGERR) ? FPEC_ERR_FAIL
+            : 0);
 }
 
 void fpec_write(const void *data, unsigned int size, uint32_t flash_address)

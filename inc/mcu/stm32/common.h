@@ -88,8 +88,10 @@ bool_t gpio_pins_connected(GPIO gpio1, unsigned int pin1,
                            GPIO gpio2, unsigned int pin2);
 
 /* FPEC */
+#define FPEC_ERR_WRPROT 1
+#define FPEC_ERR_FAIL   2
 void fpec_init(void);
-void fpec_page_erase(uint32_t flash_address);
+int fpec_page_erase(uint32_t flash_address);
 void fpec_write(const void *data, unsigned int size, uint32_t flash_address);
 
 /*
