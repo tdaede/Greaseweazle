@@ -110,6 +110,18 @@ def read_to_image(usb, args, image, decoder=None):
         print_summary(args, summary)
 
 
+def read_qd_to_image(usb, args, image, decoder=None):
+    """Reads a QD and dumps it into a new image file.
+    """
+
+    ticks = usb.sample_freq * args.revs
+    flux = usb.read_track(revs=-1, ticks=ticks)
+    flux.index_cued = True
+    flux.index_list.append(sum(flux.list))
+    print(flux)
+    image.emit_track(0, 0, flux)
+
+
 def main(argv):
 
     parser = util.ArgumentParser(usage='%(prog)s [options] file')
@@ -156,7 +168,7 @@ def main(argv):
         
         print(("Reading %s revs=" % args.tracks) + str(args.revs))
         with open_image(args, image_class) as image:
-            util.with_drive_selected(read_to_image, usb, args, image,
+            util.with_drive_selected(read_qd_to_image, usb, args, image,
                                      decoder=decoder)
     except USB.CmdError as err:
         print("Command Failed: %s" % err)

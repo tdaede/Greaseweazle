@@ -733,7 +733,8 @@ static void floppy_read(void)
             floppy_flux_end();
             floppy_state = ST_read_flux_drain;
 
-        } else if ((index.count == 0)
+        } else if ((read.max_index != INT_MAX)
+                   && (index.count == 0)
                    && (time_since(flux_op.start) > time_ms(2000))) {
 
             /* Timeout */
