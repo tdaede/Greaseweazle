@@ -56,8 +56,10 @@ typedef uint16_t timcnt_t;
 void IRQ_23(void) __attribute__((alias("IRQ_INDEX_changed"))); /* EXTI9_5 */
 
 /* We sometimes cast u_buf to uint32_t[], hence the alignment constraint. */
-#define U_BUF_SZ 8192
-static uint8_t u_buf[U_BUF_SZ] aligned(4);
+//#define U_BUF_SZ 8192
+unsigned int U_BUF_SZ = 4096;
+static uint8_t _u_buf[4096] aligned(4);
+uint8_t *u_buf = _u_buf;
 
 static void floppy_mcu_init(void)
 {
